@@ -1,7 +1,17 @@
 export class Todo {
     constructor(
-        public id : number,
-        public content : string,
-        public isCompleted : boolean = false
+        private _id : number,
+        private _content : string,
+        private _isCompleted : boolean = false
     ) {}
+
+    get id() {
+        return this._id;
+    }
+    get content() {
+        return this._content;
+    }
+    get isCompleted() {
+        return this._isCompleted;
+    }
 }
