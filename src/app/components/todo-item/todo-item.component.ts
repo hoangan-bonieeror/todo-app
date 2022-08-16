@@ -6,7 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./todo-item.component.css']
 })
 export class TodoItemComponent implements OnInit {
-
+  isHovered : boolean = false;
+  isEditing : boolean = false;
+  isChecked : boolean = false;
+  contentTodo : string = 'Todo Item'
+  
   constructor() { }
 
   ngOnInit(): void {
