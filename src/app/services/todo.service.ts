@@ -10,8 +10,8 @@ import { LocalStorageService } from './local-storage.service';
 export class TodoService {
   private static readonly TodoStorageKey = 'todos';
 
-  private todos : Todo[] = new Array<Todo>;
-  private filteredTodos : Todo[] = new Array<Todo>;
+  private todos : Todo[];
+  private filteredTodos : Todo[];
   private lengthSubject : BehaviorSubject<number> = new BehaviorSubject<number>(0);
   private displayedTodosSubject : BehaviorSubject<Todo[]> = new BehaviorSubject<Todo[]>([])
   private currentFilter : Filter = Filter.All;
@@ -23,7 +23,7 @@ export class TodoService {
 
   fetchFromLocalStorage = () => {
     this.todos = this.storageService.getValue<Todo[]>(TodoService.TodoStorageKey) || [];
-    this.filteredTodos = [...this.todos.map(todo => <Todo>({...todo}))];
+    this.filteredTodos = [...this.todos];
     this.pushDataToFlow();
   } 
 
@@ -45,7 +45,7 @@ export class TodoService {
         this.filteredTodos = this.todos.filter(todo => todo.isCompleted)
         break;
       case Filter.All :
-        this.filteredTodos = <Todo[]>[...this.todos.map(todo => ({...todo}))];
+        this.filteredTodos = [...this.todos];
     }
 
     if(isFiltering) {

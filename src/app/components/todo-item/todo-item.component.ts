@@ -1,12 +1,30 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output , AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { Todo } from 'src/app/model/todo.model';
 
+// const fadeStrikeThroughAnimation = 
 @Component({
   selector: 'app-todo-item',
   templateUrl: './todo-item.component.html',
-  styleUrls: ['./todo-item.component.css']
+  styleUrls: ['./todo-item.component.css'],
+  animations : [trigger('fadeStrikeThrough', [
+    state(
+      'active',
+      style({
+        fontSize : '18px',
+        color : 'black'
+    })),
+    state(
+      'completed',
+      style({
+        fontSize : '17px',
+        color : 'lightgrey',
+        textDecoration : 'line-through'
+    })),
+    transition('active <=> completed', [animate(250)])
+  ])]
 })
-export class TodoItemComponent implements OnInit {
+export class TodoItemComponent implements OnInit, AfterViewInit {
   @Input() todo : Todo;
   @Output() changeStatus : EventEmitter<Todo> = new EventEmitter<Todo>();
   @Output() editTodo : EventEmitter<Todo> = new EventEmitter<Todo>();
@@ -33,9 +51,7 @@ export class TodoItemComponent implements OnInit {
   }
 
   changeTodoStatus = () => {
-    this.changeStatus.emit(<Todo>{...this.todo, isCompleted: !this.todo.isCompleted });
-    this.todo.isCompleted = !this.todo.isCompleted
-    console.log(this.todo)
+    this.changeStatus.emit({...this.todo, isCompleted: !this.todo.isCompleted })
   }
 
   submitEdit = (event : KeyboardEvent) => {

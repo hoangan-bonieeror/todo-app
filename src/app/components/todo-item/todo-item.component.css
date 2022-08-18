@@ -40,7 +40,7 @@
     word-break: break-all;
     padding: 15px 15px 15px 60px;
     display: block;
-    transition: 250ms all ease-in-out;
+    /* transition: 250ms all ease-in-out; */
 }
 
 .todo-item .icon-wrapper {

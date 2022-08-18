@@ -13,7 +13,7 @@
             [checked]="todo.isCompleted"
             (change)="changeTodoStatus()"
         >
-        <label [for]="todo.id">{{ todo.content }}</label>
+        <label [@fadeStrikeThrough]="todo.isCompleted ? 'completed' : 'active'" [for]="todo.id">{{ todo.content }}</label>
     </div>
 
     <div class="d-flex align-items-center">
