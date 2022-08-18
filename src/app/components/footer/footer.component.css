@@ -36,10 +36,10 @@
 }
 
 .footer .clear-completed-btn {
-    visibility: visible;
+    visibility: hidden;
 }
 
-.footer .clear-completed-btn .visible {
+.footer .clear-completed-btn.visible {
     visibility: visible;
 }
 

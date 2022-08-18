@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { Filter, FilterButton } from 'src/app/model/filtering.model';
 import { TodoService } from 'src/app/services/todo.service';
 
@@ -7,7 +9,7 @@ import { TodoService } from 'src/app/services/todo.service';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
-export class FooterComponent implements OnInit {
+export class FooterComponent implements OnInit, OnDestroy {
   filterButtons : FilterButton[] = [
     { type : Filter.All, label : 'All', isActive : true },
     { type : Filter.Active, label : 'Active', isActive : false },
@@ -15,26 +17,33 @@ export class FooterComponent implements OnInit {
   ];
 
   length : number;
+  hasCompletedTodo$ : Observable<boolean>;
+  destroy$ : Subject<null> = new Subject<null>();
   constructor(private todoService : TodoService) { }
 
   ngOnInit(): void {
-    this.todoService.length$.subscribe(todoLength => {
+    this.hasCompletedTodo$ = this.todoService.todo$.pipe(
+      map(todos => todos.some(todo => todo.isCompleted)),
+      takeUntil(this.destroy$)
+    )
+    this.todoService.length$.pipe(takeUntil(this.destroy$)).subscribe(todoLength => {
       this.length = todoLength;
     })
   }
 
-  filterTodo = (event : MouseEvent) => {
-    const btnElement = <HTMLButtonElement>event.target
-    const index = this.filterButtons.findIndex(filter => filter.label == btnElement.id)
+  ngOnDestroy(): void {
+      this.destroy$.next(null);
+      this.destroy$.complete();
 
-    this.filterButtons = [...this.filterButtons.map(filter => {
-      return {
-        ...filter,
-        isActive : (filter.label === btnElement.id) ? true : false
-      }
-    })];
+  }
 
-    this.todoService.filterTodos(this.filterButtons[index].type, true)
+  filterTodo = (filterType : Filter) => {
+    const filterMode = filterType;
+    this.filterButtons.forEach(filter => {
+      filter.isActive = filter.type === filterMode
+    });
+
+    this.todoService.filterTodos(filterMode)
   }
 
   clearCompletedTodo = () => {

@@ -34,7 +34,7 @@ export class TodoService {
   }
 
 
-  filterTodos = (filterMode : Filter, isFiltering : boolean) => {
+  filterTodos = (filterMode : Filter, isFiltering : boolean = true) => {
     this.currentFilter = filterMode;
 
     switch(filterMode) {
@@ -95,12 +95,7 @@ export class TodoService {
   }
 
   clearCompletedTodo = () => {
-    this.todos  = [...this.todos.map(todo => {
-      return {
-        ...todo,
-        isCompleted : false
-      }
-    })]
+    this.todos = this.todos.filter(todo => !todo.isCompleted);
     this.updateToLocalStorage();
   }
 
