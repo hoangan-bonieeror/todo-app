@@ -29,7 +29,7 @@ export class TodoService {
 
   updateToLocalStorage = () => {
     this.storageService.setObject(TodoService.TodoStorageKey, this.todos);
-    
+    this.filterTodos(this.currentFilter, false)
     this.pushDataToFlow();
   }
 
@@ -48,7 +48,60 @@ export class TodoService {
         this.filteredTodos = <Todo[]>[...this.todos.map(todo => ({...todo}))];
     }
 
-    isFiltering && this.pushDataToFlow();
+    if(isFiltering) {
+      this.pushDataToFlow()
+      console.log('here')
+    }
+  }
+
+  addTodo = (value : string) => {
+    const timestampId = new Date(Date.now()).getTime();
+    const newTodo = new Todo(timestampId, value);
+    console.log(newTodo.content)
+    this.todos.unshift(newTodo);
+    this.updateToLocalStorage();
+  }
+
+  changeStatusTodo(id : number, isCompleted : boolean) {
+    let index = this.todos.findIndex(todo => todo.id == id);
+    let todoModify = this.todos[index];
+    todoModify.isCompleted = isCompleted;
+    this.todos.splice(index, 1, todoModify)
+    this.updateToLocalStorage();
+  }
+
+  editTodo(id : number, content : string) {
+    let index = this.todos.findIndex(todo => todo.id == id);
+    let todoModify = this.todos[index];
+    todoModify.content = content;
+    this.todos.splice(index, 1, todoModify)
+    this.updateToLocalStorage();
+  }
+
+  deleteTodo = (id : number) => {
+    let index = this.todos.findIndex(todo => todo.id == id);
+    this.todos.splice(index, 1)
+    this.updateToLocalStorage();
+  }
+
+  toggleAll = () => {
+    this.todos = this.todos.map(todo => {
+      return <Todo>{
+        ...todo,
+        isCompleted : !this.todos.every(item => item.isCompleted)
+      }
+    })
+    this.updateToLocalStorage();
+  }
+
+  clearCompletedTodo = () => {
+    this.todos  = [...this.todos.map(todo => {
+      return {
+        ...todo,
+        isCompleted : false
+      }
+    })]
+    this.updateToLocalStorage();
   }
 
   private pushDataToFlow = () => {
